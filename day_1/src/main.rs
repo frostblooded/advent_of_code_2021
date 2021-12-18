@@ -10,17 +10,18 @@ fn main() {
         .map(|l| l.parse::<u32>().expect("Parsing input number failed"))
         .collect();
 
-    let mut previous_number: Option<u32> = None;
+    let windows = input_numbers.windows(3);
+    let mut previous_window: Option<&[u32]> = None;
     let mut increases_count = 0;
 
-    for number in input_numbers {
-        if let Some(prev_num) = previous_number {
-            if number > prev_num {
+    for window in windows {
+        if let Some(prev_win) = previous_window {
+            if window.iter().sum::<u32>() > prev_win.iter().sum() {
                 increases_count += 1;
             }
         }
 
-        previous_number = Some(number);
+        previous_window = Some(window);
     }
 
     println!("Increases count: {}", increases_count);
