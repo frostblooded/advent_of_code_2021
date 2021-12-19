@@ -8,7 +8,7 @@ fn main() {
     let command_pairs: Vec<(char, u32)> = input
         .lines()
         .map(|l| {
-            let split: Vec<&str> = l.split(" ").collect();
+            let split: Vec<&str> = l.split(' ').collect();
 
             (
                 split
