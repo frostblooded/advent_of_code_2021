@@ -22,6 +22,7 @@ impl BoardCell {
 #[derive(Debug)]
 struct Board {
     data: Vec<Vec<BoardCell>>,
+    won: bool,
 }
 
 impl Board {
@@ -30,7 +31,10 @@ impl Board {
     }
 
     fn new() -> Self {
-        Board { data: vec![] }
+        Board {
+            data: vec![],
+            won: false,
+        }
     }
 
     fn mark_number(&mut self, number: u8) {
@@ -43,13 +47,18 @@ impl Board {
         }
     }
 
-    fn has_won(&self) -> bool {
+    fn has_won(&mut self) -> bool {
+        if self.won {
+            return true;
+        }
+
         // If there is a completed row
         if self
             .data
             .iter()
             .any(|row| row.iter().all(|cell| cell.marked))
         {
+            self.won = true;
             return true;
         }
 
@@ -64,6 +73,7 @@ impl Board {
             }
 
             if col_cells.iter().all(|cell| cell.marked) {
+                self.won = true;
                 return true;
             }
         }
@@ -75,6 +85,7 @@ impl Board {
         }
 
         if diag_cells.iter().all(|cell| cell.marked) {
+            self.won = true;
             return true;
         }
 
@@ -85,6 +96,7 @@ impl Board {
         }
 
         if diag_cells.iter().all(|cell| cell.marked) {
+            self.won = true;
             return true;
         }
 
@@ -142,13 +154,23 @@ fn main() {
         lines.next();
     }
 
+    let mut boards_left_to_win: u32 = boards.len() as u32;
+
     'outer: for number in numbers {
         for board in &mut boards {
+            if board.has_won() {
+                continue;
+            }
+
             board.mark_number(number);
 
             if board.has_won() {
-                println!("Result: {}", board.unmarked_sum() * number as u32);
-                break 'outer;
+                if boards_left_to_win == 1 {
+                    println!("Result: {}", board.unmarked_sum() * number as u32);
+                    break 'outer;
+                }
+
+                boards_left_to_win -= 1;
             }
         }
     }
