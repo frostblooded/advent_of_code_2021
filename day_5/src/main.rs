@@ -34,6 +34,27 @@ impl Board {
             for i in x_start..=x_end {
                 self.data[i as usize][range.start.y as usize] += 1;
             }
+        } else {
+            // Diagonal
+            let left_x: u32 = min(range.start.x, range.end.x);
+
+            let (left_point, right_point): (Point, Point) = if left_x == range.start.x {
+                (range.start, range.end)
+            } else {
+                (range.end, range.start)
+            };
+
+            if left_point.y < right_point.y {
+                // Ascending
+                for (i, x) in (left_point.x..=right_point.x).enumerate() {
+                    self.data[x as usize][left_point.y as usize + i] += 1;
+                }
+            } else {
+                // Descending
+                for (i, x) in (left_point.x..=right_point.x).enumerate() {
+                    self.data[x as usize][left_point.y as usize - i] += 1;
+                }
+            }
         }
     }
 
@@ -62,13 +83,13 @@ impl Board {
 
 fn main() {
     let input: String = fs::read_to_string("input.txt").expect("Could not read input");
-    let ranges = input.lines().filter_map(|line| {
+    let ranges = input.lines().map(|line| {
         let mut iter = line
             .split(" -> ")
             .flat_map(|s| s.split(','))
             .map(|s| s.parse::<u32>().expect("Input number parse failed"));
 
-        let res = Range {
+        Range {
             start: Point {
                 x: iter.next().unwrap(),
                 y: iter.next().unwrap(),
@@ -77,12 +98,6 @@ fn main() {
                 x: iter.next().unwrap(),
                 y: iter.next().unwrap(),
             },
-        };
-
-        if res.start.x != res.end.x && res.start.y != res.end.y {
-            None
-        } else {
-            Some(res)
         }
     });
 
