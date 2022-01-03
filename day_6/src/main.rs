@@ -23,9 +23,7 @@ fn main() {
         ages[age as usize] += 1;
     }
 
-    dbg!(&ages);
-
-    for i in 1..=DAYS {
+    for _ in 1..=DAYS {
         let mut new_ages = vec![0; MAX_AGE as usize + 1];
 
         for j in 0..=(MAX_AGE - 1) {
@@ -36,8 +34,6 @@ fn main() {
         new_ages[6] += ages[0];
 
         ages = new_ages;
-        dbg!(i);
-        dbg!(&ages);
     }
 
     let mut res: u128 = 0;
